@@ -16,6 +16,7 @@ Você pode usar Codex, Cursor, Claude Code ou outra IA que consiga ler e escreve
 - `materiais/tarefas/`: enunciados das tarefas; cada um tem seu próprio caso.
 - `materiais/modelo-apresentacao-as-is.pdf`: estrutura de apresentação de referência.
 - `templates/`: cinco BPMNs genéricos e dois exemplos Draw.io.
+- [trabalhos-do-bryan/](trabalhos-do-bryan/): apresentação e três BPMNs finais da Barbeirada Club, como exemplo acadêmico com dados pessoais removidos.
 - `trabalho/`: espaço para o novo caso, fontes, exportações e entrega.
 - `scripts/validar-bpmn.py`: conferência estrutural simples, sem bibliotecas adicionais.
 - `config/`: exemplos de configuração MCP, sem credenciais.
@@ -23,6 +24,6 @@ Você pode usar Codex, Cursor, Claude Code ou outra IA que consiga ler e escreve
 ## Importante para começar outro caso
 Não há empresa ou processo escolhido previamente. Os exemplos não comprovam como uma empresa trabalha. Primeiro leia o enunciado e registre o processo real e as informações ainda não confirmadas.
 
-O trabalho identificável do grupo, apresentações preenchidas, versões antigas, provas respondidas, configurações pessoais e arquivos temporários não integram este kit público.
+O trabalho da Barbeirada está disponível como exemplo em `trabalhos-do-bryan/`. Versões antigas, trabalhos de outros grupos, provas respondidas, configurações pessoais e arquivos temporários não integram este kit público.
 
 Os materiais didáticos mantêm os créditos dos autores. Este repositório não atribui uma nova licença aos materiais de terceiros.

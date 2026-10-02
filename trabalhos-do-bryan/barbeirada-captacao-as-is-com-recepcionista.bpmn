@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_barbeirada-captacao-as-is" targetNamespace="https://barbeirada.example/modelagem" exporter="Camunda Modeler" exporterVersion="5.51.1">
+  <bpmn:message id="C_M_Contato" name="Contato"/>
+  <bpmn:message id="C_M_Anuncio" name="Anúncio"/>
+  <bpmn:collaboration id="Collaboration_barbeirada-captacao-as-is">
+    <bpmn:participant id="Captacao_Cliente" name="Cliente /Lead" processRef="Process_Captacao_Cliente"/>
+    <bpmn:participant id="Captacao_Barbearia" name="Barbeirada Club" processRef="Process_Captacao_Barbearia"/>
+    <bpmn:messageFlow id="barbeirada-captacao-as-is_Message_1" name="Anúncio" sourceRef="C_Publicar" targetRef="C_Consultar"/>
+    <bpmn:messageFlow id="barbeirada-captacao-as-is_Message_2" name="Contato para atendimento" sourceRef="C_Enviar" targetRef="C_LeadInicio"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_Captacao_Cliente" name="Cliente / interessado" isExecutable="false">
+    <bpmn:documentation>AS-IS acadêmico da Barbeirada Club. Fontes: apresentação inicial do grupo, template AS-IS do professor e Aulas 4, 5 e 6 do semestre. Confirmado pelo usuário: a recepcionista responde no Chatwoot e registra manualmente a reserva no CashBarber. Detalhes adicionais são premissas autorizadas de modelagem, sem entrevistas ou medições atribuídas à empresa. Revisão solicitada pelo usuário: nível descritivo, atividades agrupadas por objetivo, cliente explícito, menor detalhamento e layout compacto. Objetos de dados e anotações visuais foram retirados; premissas permanecem nesta documentação. Sem integração automática, engine, deploy ou extensões de execução. A captação compreende a divulgação, o interesse do cliente e a entrada do contato. Um único início do cliente contempla anúncio, indicação ou busca. A raia da recepcionista explicita a chegada da mensagem e a visualização humana no Chatwoot. O recebimento não exige campanha anterior. Resposta, conferência de dados e agendamento permanecem no processo Atendimento e agendamento. Não existe transferência automática entre sistemas. A campanha inicia quando há demanda de divulgação identificada; o evento condicional representa essa condição de negócio, sem detecção automática presumida. Campanha e recebimento de contato são instâncias independentes; a campanha não aguarda um único cliente.</bpmn:documentation>
+    <bpmn:startEvent id="C_Interesse" name="Interesse despertado">
+      <bpmn:documentation>O interesse pode decorrer de anúncio, indicação ou busca espontânea, conforme a apresentação inicial. Um único início representa essas origens; não se presume mensagem, prazo ou condição automatizada para iniciar cada variante.</bpmn:documentation>
+      <bpmn:outgoing>barbeirada-captacao-as-is_Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="C_Consultar" name="Consultar informações">
+      <bpmn:documentation>Consultar informações é o ponto de contato da mensagem Anúncio, conforme Aula 6 p44. O anúncio fornece informação à atividade; não é uma espera obrigatória nem o único gatilho do processo. Interesse despertado continua abrangendo anúncio, indicação e busca.</bpmn:documentation><bpmn:incoming>barbeirada-captacao-as-is_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-captacao-as-is_Flow_2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="C_QuerContato" name="Deseja entrar em contato?">
+      <bpmn:incoming>barbeirada-captacao-as-is_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-captacao-as-is_Flow_5</bpmn:outgoing>
+      <bpmn:outgoing>barbeirada-captacao-as-is_Flow_6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="C_Enviar" name="Entrar em contato por WhatsApp / Instagram" messageRef="C_M_Contato">
+      <bpmn:incoming>barbeirada-captacao-as-is_Flow_5</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-captacao-as-is_Flow_3</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="C_ContatoFim" name="Contato enviado">
+      <bpmn:documentation>O cliente enviou o contato. Na raia da recepcionista, esse contato é recebido e visualizado no Chatwoot. O fim Contato recebido para atendimento corresponde à entrada do processo Atendimento e agendamento. Resposta e conferência do pedido pertencem ao processo seguinte.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-captacao-as-is_Flow_3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="C_SemInteresse" name="Sem contato">
+      <bpmn:incoming>barbeirada-captacao-as-is_Flow_6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="barbeirada-captacao-as-is_Flow_1" sourceRef="C_Interesse" targetRef="C_Consultar"/>
+    <bpmn:sequenceFlow id="barbeirada-captacao-as-is_Flow_2" sourceRef="C_Consultar" targetRef="C_QuerContato"/>
+    <bpmn:sequenceFlow id="barbeirada-captacao-as-is_Flow_5" name="Sim" sourceRef="C_QuerContato" targetRef="C_Enviar">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-captacao-as-is_Flow_6" name="Não" sourceRef="C_QuerContato" targetRef="C_SemInteresse">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-captacao-as-is_Flow_3" sourceRef="C_Enviar" targetRef="C_ContatoFim"/>
+  </bpmn:process>
+  <bpmn:process id="Process_Captacao_Barbearia" name="Barbeirada Club" isExecutable="false">
+    <bpmn:documentation>AS-IS acadêmico da Barbeirada Club. Fontes: apresentação inicial do grupo, template AS-IS do professor e Aulas 4, 5 e 6 do semestre. Confirmado pelo usuário: a recepcionista responde no Chatwoot e registra manualmente a reserva no CashBarber. Detalhes adicionais são premissas autorizadas de modelagem, sem entrevistas ou medições atribuídas à empresa. Revisão solicitada pelo usuário: nível descritivo, atividades agrupadas por objetivo, cliente explícito, menor detalhamento e layout compacto. Objetos de dados e anotações visuais foram retirados; premissas permanecem nesta documentação. Sem integração automática, engine, deploy ou extensões de execução. A captação compreende a divulgação, o interesse do cliente e a entrada do contato. Um único início do cliente contempla anúncio, indicação ou busca. A raia da recepcionista explicita a chegada da mensagem e a visualização humana no Chatwoot. O recebimento não exige campanha anterior. Resposta, conferência de dados e agendamento permanecem no processo Atendimento e agendamento. Não existe transferência automática entre sistemas. A campanha inicia quando há demanda de divulgação identificada; o evento condicional representa essa condição de negócio, sem detecção automática presumida. Campanha e recebimento de contato são instâncias independentes; a campanha não aguarda um único cliente.</bpmn:documentation>
+    <bpmn:laneSet id="LaneSet_Captacao_Barbearia">
+      <bpmn:lane id="Captacao_Trafego" name="Gestor de tráfego">
+        <bpmn:flowNodeRef>C_CampanhaInicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_Planejar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_Publicar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_CampanhaFim</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Captacao_Recepcao" name="Recepcionista">
+        <bpmn:flowNodeRef>C_LeadInicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_Conferir</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_LeadFim</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="C_CampanhaInicio" name="Demanda de divulgação">
+      <bpmn:documentation>Demanda de divulgação identificada: condição de negócio já representada pelo rótulo original. O gatilho condicional distingue esta entrada do recebimento de contato, conforme Aula 6 p29. Não representa monitoramento automático, calendário ou nova regra de execução.</bpmn:documentation>
+      <bpmn:outgoing>barbeirada-captacao-as-is_Flow_7</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition id="C_CampanhaDemanda_event">
+        <bpmn:condition xsi:type="bpmn:tFormalExpression">Demanda de divulgação identificada</bpmn:condition>
+      </bpmn:conditionalEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:userTask id="C_Planejar" name="Planejar e criar campanha">
+      <bpmn:incoming>barbeirada-captacao-as-is_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-captacao-as-is_Flow_8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="C_Publicar" name="Publicar campanha nas redes sociais">
+      <bpmn:incoming>barbeirada-captacao-as-is_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-captacao-as-is_Flow_9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="C_CampanhaFim" name="Campanha divulgada">
+      <bpmn:incoming>barbeirada-captacao-as-is_Flow_9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="C_LeadInicio" name="Contato recebido">
+      <bpmn:documentation>Contato do cliente recebido pelos canais digitais no Chatwoot. O evento é a recepção da mensagem; visualizar o contato é o trabalho humano seguinte. Pode ocorrer sem campanha em execução.</bpmn:documentation>
+      <bpmn:outgoing>C_FluxoContatoVisualizar</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="C_LeadInicio_event" messageRef="C_M_Contato"/>
+    </bpmn:startEvent>
+    <bpmn:userTask id="C_Conferir" name="Visualizar contato no Chatwoot">
+      <bpmn:documentation>Recepcionista visualiza o contato recebido no CRM confirmado pelo usuário. A atividade não inclui resposta, conferência de pedido, coleta de preferências ou qualificação do lead, que pertencem a Atendimento e agendamento. Não há registro duplicado nem transferência automática presumida.</bpmn:documentation>
+      <bpmn:incoming>C_FluxoContatoVisualizar</bpmn:incoming>
+      <bpmn:outgoing>C_FluxoContatoAtendimento</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="C_LeadFim" name="Contato recebido para atendimento">
+      <bpmn:documentation>O contato está disponível à recepcionista para o Atendimento e agendamento, cujo início é Contato recebido. São recortes sucessivos do mesmo contato, não dois pedidos obrigatórios do cliente.</bpmn:documentation>
+      <bpmn:incoming>C_FluxoContatoAtendimento</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="barbeirada-captacao-as-is_Flow_7" sourceRef="C_CampanhaInicio" targetRef="C_Planejar"/>
+    <bpmn:sequenceFlow id="barbeirada-captacao-as-is_Flow_8" sourceRef="C_Planejar" targetRef="C_Publicar"/>
+    <bpmn:sequenceFlow id="barbeirada-captacao-as-is_Flow_9" sourceRef="C_Publicar" targetRef="C_CampanhaFim"/>
+    <bpmn:sequenceFlow id="C_FluxoContatoVisualizar" sourceRef="C_LeadInicio" targetRef="C_Conferir"/>
+    <bpmn:sequenceFlow id="C_FluxoContatoAtendimento" sourceRef="C_Conferir" targetRef="C_LeadFim"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_barbeirada-captacao-as-is">
+    <bpmndi:BPMNPlane id="Plane_barbeirada-captacao-as-is" bpmnElement="Collaboration_barbeirada-captacao-as-is">
+      <bpmndi:BPMNShape id="Captacao_Cliente_di" bpmnElement="Captacao_Cliente" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1000" height="280"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Interesse_di" bpmnElement="C_Interesse">
+        <dc:Bounds x="230" y="162" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="225" y="207" width="86" height="28"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Consultar_di" bpmnElement="C_Consultar">
+        <dc:Bounds x="335" y="140" width="185" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_QuerContato_di" bpmnElement="C_QuerContato" isMarkerVisible="true">
+        <dc:Bounds x="570" y="155" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="533" y="100" width="130" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Enviar_di" bpmnElement="C_Enviar">
+        <dc:Bounds x="695" y="140" width="205" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_ContatoFim_di" bpmnElement="C_ContatoFim">
+        <dc:Bounds x="970" y="162" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="960" y="207" width="81" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_SemInteresse_di" bpmnElement="C_SemInteresse">
+        <dc:Bounds x="577" y="285" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="564" y="328" width="62" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Flow_1_di" bpmnElement="barbeirada-captacao-as-is_Flow_1">
+        <di:waypoint x="266" y="180"/>
+        <di:waypoint x="335" y="180"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Flow_2_di" bpmnElement="barbeirada-captacao-as-is_Flow_2">
+        <di:waypoint x="520" y="180"/>
+        <di:waypoint x="570" y="180"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Flow_5_di" bpmnElement="barbeirada-captacao-as-is_Flow_5">
+        <di:waypoint x="620" y="180"/>
+        <di:waypoint x="695" y="180"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="647" y="157" width="19" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Flow_6_di" bpmnElement="barbeirada-captacao-as-is_Flow_6">
+        <di:waypoint x="595" y="205"/>
+        <di:waypoint x="595" y="285"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="613" y="240" width="21" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Flow_3_di" bpmnElement="barbeirada-captacao-as-is_Flow_3">
+        <di:waypoint x="900" y="180"/>
+        <di:waypoint x="970" y="180"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Captacao_Barbearia_di" bpmnElement="Captacao_Barbearia" isHorizontal="true">
+        <dc:Bounds x="160" y="460" width="1000" height="300"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Captacao_Recepcao_di" bpmnElement="Captacao_Recepcao" isHorizontal="true">
+        <dc:Bounds x="190" y="600" width="970" height="160"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Captacao_Trafego_di" bpmnElement="Captacao_Trafego" isHorizontal="true">
+        <dc:Bounds x="190" y="460" width="970" height="140"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_CampanhaInicio_di" bpmnElement="C_CampanhaInicio">
+        <dc:Bounds x="230" y="507" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="220" y="563" width="119" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Planejar_di" bpmnElement="C_Planejar">
+        <dc:Bounds x="335" y="485" width="185" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Publicar_di" bpmnElement="C_Publicar">
+        <dc:Bounds x="580" y="485" width="195" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_CampanhaFim_di" bpmnElement="C_CampanhaFim">
+        <dc:Bounds x="840" y="507" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="821" y="555" width="104" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_LeadInicio_di" bpmnElement="C_LeadInicio">
+        <dc:Bounds x="230" y="667" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="225" y="712" width="80" height="28"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Conferir_di" bpmnElement="C_Conferir">
+        <dc:Bounds x="335" y="645" width="245" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_LeadFim_di" bpmnElement="C_LeadFim">
+        <dc:Bounds x="695" y="667" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="712" width="165" height="32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Flow_7_di" bpmnElement="barbeirada-captacao-as-is_Flow_7">
+        <di:waypoint x="266" y="525"/>
+        <di:waypoint x="335" y="525"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Flow_8_di" bpmnElement="barbeirada-captacao-as-is_Flow_8">
+        <di:waypoint x="520" y="525"/>
+        <di:waypoint x="580" y="525"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Flow_9_di" bpmnElement="barbeirada-captacao-as-is_Flow_9">
+        <di:waypoint x="775" y="525"/>
+        <di:waypoint x="840" y="525"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="C_FluxoContatoVisualizar_di" bpmnElement="C_FluxoContatoVisualizar">
+        <di:waypoint x="266" y="685"/>
+        <di:waypoint x="335" y="685"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="C_FluxoContatoAtendimento_di" bpmnElement="C_FluxoContatoAtendimento">
+        <di:waypoint x="580" y="685"/>
+        <di:waypoint x="695" y="685"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Message_1_di" bpmnElement="barbeirada-captacao-as-is_Message_1">
+        <di:waypoint x="678" y="485"/><di:waypoint x="678" y="400"/><di:waypoint x="428" y="400"/><di:waypoint x="428" y="220"/><bpmndi:BPMNLabel>
+          <dc:Bounds x="455" y="375" width="40" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-captacao-as-is_Message_2_di" bpmnElement="barbeirada-captacao-as-is_Message_2">
+        <di:waypoint x="797" y="220"/>
+        <di:waypoint x="797" y="410"/>
+        <di:waypoint x="1100" y="410"/>
+        <di:waypoint x="1100" y="620"/>
+        <di:waypoint x="248" y="620"/>
+        <di:waypoint x="248" y="667"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="830" y="425" width="160" height="28"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

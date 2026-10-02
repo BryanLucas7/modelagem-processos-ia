@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_barbeirada-recepcao-execucao-as-is" targetNamespace="https://barbeirada.example/modelagem" exporter="Camunda Modeler" exporterVersion="5.51.1">
+  <bpmn:message id="R_M_Avaliacao" name="Avaliação do cliente" />
+  <bpmn:message id="R_M_Pedido" name="Pedido de avaliação" />
+  <bpmn:message id="R_M_Conclusao" name="Atendimento concluído" />
+  <bpmn:message id="R_M_Cancelamento" name="Cancelamento informado" />
+  <bpmn:message id="R_M_Chegada" name="Identificação e chegada" />
+  <bpmn:collaboration id="Collaboration_barbeirada-recepcao-execucao-as-is">
+    <bpmn:participant id="Execucao_Cliente" name="Cliente" processRef="Process_Execucao_Cliente" />
+    <bpmn:participant id="Execucao_Barbearia" name="Barbeirada Club" processRef="Process_Execucao_Barbearia" />
+    <bpmn:messageFlow id="barbeirada-recepcao-execucao-as-is_Message_1" name="Chegada / reserva" sourceRef="RC_Chegar" targetRef="R_Conferir" />
+    <bpmn:messageFlow id="barbeirada-recepcao-execucao-as-is_Message_2" name="Cancelamento" sourceRef="RC_Cancelar" targetRef="R_CancelamentoInformado" />
+    <bpmn:messageFlow id="barbeirada-recepcao-execucao-as-is_Message_3" name="Serviço concluído" sourceRef="R_Cortar" targetRef="RC_Conclusao" />
+    <bpmn:messageFlow id="barbeirada-recepcao-execucao-as-is_Message_4" name="Pedido de avaliação" sourceRef="R_Feedback" targetRef="RC_Pedido" />
+    <bpmn:messageFlow id="barbeirada-recepcao-execucao-as-is_Message_5" name="Avaliação" sourceRef="RC_Avaliacao" targetRef="R_FeedbackInicio" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_Execucao_Cliente" name="Cliente" isExecutable="false">
+    <bpmn:documentation>AS-IS acadêmico da Barbeirada Club. Fontes: apresentação inicial do grupo, template AS-IS do professor e Aulas 4, 5 e 6 do semestre. Confirmado pelo usuário: a recepcionista responde no Chatwoot e registra manualmente a reserva no CashBarber. Detalhes adicionais são premissas autorizadas de modelagem, sem entrevistas ou medições atribuídas à empresa. Revisão solicitada pelo usuário: nível descritivo, atividades agrupadas por objetivo, cliente explícito, menor detalhamento e layout compacto. Objetos de dados e anotações visuais foram retirados; premissas permanecem nesta documentação. Sem integração automática, engine, deploy ou extensões de execução.  Entrada: reserva confirmada, saída do agendamento. A chegada é aguardada em tarefa de recepção de mensagem. Cancelamento informado e falta constatada por conferência manual têm saídas interruptivas distintas. Premissa: a recepcionista acompanha o cliente esperado até que compareça, cancele ou tenha ausência constatada após a janela de chegada. A duração da janela não foi informada. Não se presume constatação automática ou tolerância numérica. Cliente pode comparecer, informar cancelamento ou não comparecer sem avisar. Recepção e cortesia foram agrupadas; atendimento pelo barbeiro inclui chamada, preferências, execução e comunicação da conclusão. Após solicitar avaliação, o processo aguarda por até 24 horas. Prazo confirmado pelo usuário em 01/10/2026: avaliação recebida dentro do prazo segue à conferência no Google Maps; ausência de resposta após 24h interrompe a espera e encerra o acompanhamento. O Google Maps foi indicado pela edição de nomenclatura do usuário. Não se presume integração automática entre sistemas. Premissas: cancelamentos, faltas e avaliação são acompanhados manualmente nos sistemas indicados. Não há penalidades ou cobranças presumidas.</bpmn:documentation>
+    <bpmn:startEvent id="RC_Inicio" name="Reserva confirmada">
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="RC_Comparecer" name="Conduta do cliente?">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_7</bpmn:outgoing>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_8</bpmn:outgoing>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="RC_Chegar" name="Comparecer e informar reserva" messageRef="R_M_Chegada">
+      <bpmn:documentation>Comparecimento na data da reserva. Preferências e chamada estão agrupadas no atendimento para manter nível descritivo.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_2</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="RC_Conclusao" name="Receber atendimento" messageRef="R_M_Conclusao">
+      <bpmn:documentation>Atividade agrega a participação no serviço e termina com sua conclusão comunicada pelo barbeiro.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_3</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:receiveTask id="RC_Pedido" name="Receber pedido de avaliação" messageRef="R_M_Pedido">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_3</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_4</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="RC_Avaliar" name="Deseja avaliar?">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_4</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_10</bpmn:outgoing>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="RC_Avaliacao" name="Enviar avaliação" messageRef="R_M_Avaliacao">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_5</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="RC_FimAvaliacao" name="Avaliação enviada">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="RC_SemAvaliacao" name="Visita sem avaliação">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_11</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="RC_Cancelar" name="Informar cancelamento" messageRef="R_M_Cancelamento">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_6</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="RC_FimCancelado" name="Cancelamento informado">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="RC_FimFalta" name="Não comparece nem avisa">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_1" sourceRef="RC_Inicio" targetRef="RC_Comparecer" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_7" name="Comparecer" sourceRef="RC_Comparecer" targetRef="RC_Chegar">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Comparecer</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_8" name="Cancelar" sourceRef="RC_Comparecer" targetRef="RC_Cancelar">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Cancelar</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_9" name="Faltar" sourceRef="RC_Comparecer" targetRef="RC_FimFalta">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Faltar</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_2" sourceRef="RC_Chegar" targetRef="RC_Conclusao" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_3" sourceRef="RC_Conclusao" targetRef="RC_Pedido" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_4" sourceRef="RC_Pedido" targetRef="RC_Avaliar" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_10" name="Sim" sourceRef="RC_Avaliar" targetRef="RC_Avaliacao">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_11" name="Não" sourceRef="RC_Avaliar" targetRef="RC_SemAvaliacao">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_5" sourceRef="RC_Avaliacao" targetRef="RC_FimAvaliacao" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_6" sourceRef="RC_Cancelar" targetRef="RC_FimCancelado" />
+  </bpmn:process>
+  <bpmn:process id="Process_Execucao_Barbearia" name="Barbeirada Club" isExecutable="false">
+    <bpmn:documentation>AS-IS acadêmico da Barbeirada Club. Fontes: apresentação inicial do grupo, template AS-IS do professor e Aulas 4, 5 e 6 do semestre. Confirmado pelo usuário: a recepcionista responde no Chatwoot e registra manualmente a reserva no CashBarber. Detalhes adicionais são premissas autorizadas de modelagem, sem entrevistas ou medições atribuídas à empresa. Revisão solicitada pelo usuário: nível descritivo, atividades agrupadas por objetivo, cliente explícito, menor detalhamento e layout compacto. Objetos de dados e anotações visuais foram retirados; premissas permanecem nesta documentação. Sem integração automática, engine, deploy ou extensões de execução.  Entrada: reserva confirmada, saída do agendamento. A chegada é aguardada em tarefa de recepção de mensagem. Cancelamento informado e falta constatada por conferência manual têm saídas interruptivas distintas. Premissa: a recepcionista acompanha o cliente esperado até que compareça, cancele ou tenha ausência constatada após a janela de chegada. A duração da janela não foi informada. Não se presume constatação automática ou tolerância numérica. Cliente pode comparecer, informar cancelamento ou não comparecer sem avisar. Recepção e cortesia foram agrupadas; atendimento pelo barbeiro inclui chamada, preferências, execução e comunicação da conclusão. Após solicitar avaliação, o processo aguarda por até 24 horas. Prazo confirmado pelo usuário em 01/10/2026: avaliação recebida dentro do prazo segue à conferência no Google Maps; ausência de resposta após 24h interrompe a espera e encerra o acompanhamento. O Google Maps foi indicado pela edição de nomenclatura do usuário. Não se presume integração automática entre sistemas. Premissas: cancelamentos, faltas e avaliação são acompanhados manualmente nos sistemas indicados. Não há penalidades ou cobranças presumidas.</bpmn:documentation>
+    <bpmn:laneSet id="LaneSet_Execucao_Barbearia">
+      <bpmn:lane id="Execucao_Barbeiro" name="Barbeiro profissional">
+        <bpmn:flowNodeRef>R_Cortar</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Execucao_Recepcao" name="Recepcionista">
+        <bpmn:flowNodeRef>R_Conferir</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_Recepcionar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_CancelarReserva</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_Cancelado</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_Feedback</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_Fim</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_FeedbackFim</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_RegistrarFeedback</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_FeedbackInicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_Falta</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_Inicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_FaltaFim</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_CancelamentoInformado</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_AusenciaConstatada</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>R_PrazoAvaliacao</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:receiveTask id="R_Conferir" name="Aguardar chegada do cliente" messageRef="R_M_Chegada">
+      <bpmn:documentation>Espera pela identificação e presença do cliente da reserva confirmada. Cancelamento informado interrompe esta espera por evento de mensagem. Falta pode ser constatada por conferência manual após a janela de chegada, cuja duração não foi informada. A reserva é conferida no CashBarber ao recepcionar o cliente. Não existe monitoramento ou cancelamento automático.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_12</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_13</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:userTask id="R_Recepcionar" name="Recepcionar cliente e oferecer cortesia">
+      <bpmn:documentation>Recepcionar o cliente presente, conferir a reserva no CashBarber e oferecer a cortesia prevista no slide. Trabalho humano com software e atendimento presencial, agrupado no nível descritivo. A nomenclatura e o layout ajustados pelo usuário foram preservados.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_13</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_22</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="R_CancelarReserva" name="Registrar cancelamento no CashBarber">
+      <bpmn:documentation>Premissa: registro manual; sem cobrança ou penalidade presumida.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_19</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_14</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="R_Cancelado" name="Reserva cancelada">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_14</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="R_Feedback" name="Solicitar avaliação pós-serviço" messageRef="R_M_Pedido">
+      <bpmn:documentation>Solicitação prevista no slide inicial. O processo segue à espera de avaliação por até 24h, prazo confirmado pelo usuário. Não encerra imediatamente após a solicitação.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_23</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_15</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="R_Fim" name="Acompanhamento encerrado sem avaliação">
+      <bpmn:documentation>Resultado do prazo de 24h: a espera e o acompanhamento pós-serviço são encerrados sem avaliação recebida. O atendimento físico já foi concluído antes da solicitação de avaliação. Não se impede que o cliente avalie posteriormente; avaliações posteriores não reabrem esta instância no recorte modelado.</bpmn:documentation>
+      <bpmn:incoming>R_FluxoPrazoEncerrado</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="R_FeedbackFim" name="Avaliação conferida">
+      <bpmn:documentation>Atendimento e acompanhamento pós-serviço encerrados após avaliação recebida dentro de 24h e conferida no Google Maps.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_17</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="R_RegistrarFeedback" name="Conferir avaliação no Google Maps">
+      <bpmn:documentation>Conferir o conteúdo da avaliação no Google Maps, conforme nomenclatura editada pelo usuário. Esta atividade só é alcançada quando houve avaliação dentro do prazo de acompanhamento; não há integração automática com Chatwoot ou envio obrigatório de resposta.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_16</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_17</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:receiveTask id="R_FeedbackInicio" name="Aguardar avaliação (até 24h)" messageRef="R_M_Avaliacao">
+      <bpmn:documentation>Prazo de 24 horas confirmado pelo usuário em 01/10/2026. A espera inicia depois de solicitar avaliação. Avaliação identificada dentro do prazo segue à conferência no Google Maps; decorrido o prazo sem avaliação, o temporizador interrompe a espera. Mensagem representa a disponibilidade da avaliação do cliente, sem afirmar sincronização automática, webhook ou integração entre Google Maps e Chatwoot.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_15</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_16</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:userTask id="R_Falta" name="Registrar falta no CashBarber">
+      <bpmn:documentation>Premissa: ausência constatada por conferência humana após a janela operacional de chegada, cuja duração não foi informada. Não é automação.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_20</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_21</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:manualTask id="R_Cortar" name="Realizar atendimento e informar conclusão">
+      <bpmn:documentation>Inclui preparar atendimento, chamar o cliente, confirmar preferências e executar o serviço. Atividade agrupada no nível descritivo.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_22</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_23</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_12" sourceRef="R_Inicio" targetRef="R_Conferir" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_13" sourceRef="R_Conferir" targetRef="R_Recepcionar" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_19" sourceRef="R_CancelamentoInformado" targetRef="R_CancelarReserva" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_20" sourceRef="R_AusenciaConstatada" targetRef="R_Falta" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_22" sourceRef="R_Recepcionar" targetRef="R_Cortar" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_14" sourceRef="R_CancelarReserva" targetRef="R_Cancelado" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_23" sourceRef="R_Cortar" targetRef="R_Feedback" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_15" sourceRef="R_Feedback" targetRef="R_FeedbackInicio" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_17" sourceRef="R_RegistrarFeedback" targetRef="R_FeedbackFim" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_16" sourceRef="R_FeedbackInicio" targetRef="R_RegistrarFeedback" />
+    <bpmn:sequenceFlow id="barbeirada-recepcao-execucao-as-is_Flow_21" sourceRef="R_Falta" targetRef="R_FaltaFim" />
+    <bpmn:startEvent id="R_Inicio" name="Reserva confirmada">
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_12</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="R_FaltaFim" name="Cliente não compareceu">
+      <bpmn:incoming>barbeirada-recepcao-execucao-as-is_Flow_21</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="R_CancelamentoInformado" name="Cancelamento informado" attachedToRef="R_Conferir">
+      <bpmn:documentation>Recebimento do cancelamento comunicado pelo cliente enquanto se aguarda a chegada. Interrompe a espera; a recepcionista registra o cancelamento no CashBarber.</bpmn:documentation>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_19</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="R_CancelamentoInformado_event" messageRef="R_M_Cancelamento" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="R_AusenciaConstatada" name="Falta constatada" attachedToRef="R_Conferir">
+      <bpmn:documentation>Premissa de detalhamento: ausência constatada por conferência humana ao fim da janela operacional de chegada. A duração não foi confirmada; não há temporizador numérico, robô ou integração que detecte falta.</bpmn:documentation>
+      <bpmn:outgoing>barbeirada-recepcao-execucao-as-is_Flow_20</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition id="R_AusenciaConstatada_event">
+        <bpmn:condition xsi:type="bpmn:tFormalExpression">ausenciaConstatadaNaConferenciaManualAposJanelaDeChegada</bpmn:condition>
+      </bpmn:conditionalEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="R_PrazoAvaliacao" name="24h sem avaliação" attachedToRef="R_FeedbackInicio">
+      <bpmn:documentation>Prazo real informado pelo usuário para esta modelagem: 24h para aguardar avaliação. Se a espera terminar com avaliação recebida, este temporizador é cancelado. Se vencer primeiro, interrompe a espera e encerra o acompanhamento sem avaliação.</bpmn:documentation>
+      <bpmn:outgoing>R_FluxoPrazoEncerrado</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="R_PrazoAvaliacao_event">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT24H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="R_FluxoPrazoEncerrado" sourceRef="R_PrazoAvaliacao" targetRef="R_Fim" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_barbeirada-recepcao-execucao-as-is">
+    <bpmndi:BPMNPlane id="Plane_barbeirada-recepcao-execucao-as-is" bpmnElement="Collaboration_barbeirada-recepcao-execucao-as-is">
+      <bpmndi:BPMNShape id="Execucao_Cliente_di" bpmnElement="Execucao_Cliente" isHorizontal="true">
+        <dc:Bounds x="210" y="80" width="1850" height="295" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_Inicio_di" bpmnElement="RC_Inicio">
+        <dc:Bounds x="270" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="263" y="208" width="99" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_Comparecer_di" bpmnElement="RC_Comparecer" isMarkerVisible="true">
+        <dc:Bounds x="400" y="155" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="379" y="100" width="98" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_Chegar_di" bpmnElement="RC_Chegar">
+        <dc:Bounds x="550" y="140" width="175" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_Conclusao_di" bpmnElement="RC_Conclusao">
+        <dc:Bounds x="790" y="140" width="175" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_Pedido_di" bpmnElement="RC_Pedido">
+        <dc:Bounds x="1020" y="140" width="175" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_Avaliar_di" bpmnElement="RC_Avaliar" isMarkerVisible="true">
+        <dc:Bounds x="1245" y="155" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1235" y="123" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_Avaliacao_di" bpmnElement="RC_Avaliacao">
+        <dc:Bounds x="1375" y="140" width="175" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_FimAvaliacao_di" bpmnElement="RC_FimAvaliacao">
+        <dc:Bounds x="1600" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1588" y="208" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_SemAvaliacao_di" bpmnElement="RC_SemAvaliacao">
+        <dc:Bounds x="1252" y="287" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1232" y="330" width="101" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_Cancelar_di" bpmnElement="RC_Cancelar">
+        <dc:Bounds x="550" y="265" width="175" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_FimCancelado_di" bpmnElement="RC_FimCancelado">
+        <dc:Bounds x="800" y="287" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="774" y="330" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RC_FimFalta_di" bpmnElement="RC_FimFalta">
+        <dc:Bounds x="407" y="287" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="362" y="330" width="131" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_1_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_1">
+        <di:waypoint x="306" y="180" />
+        <di:waypoint x="400" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_7_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_7">
+        <di:waypoint x="450" y="180" />
+        <di:waypoint x="550" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="473" y="158" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_8_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_8">
+        <di:waypoint x="425" y="205" />
+        <di:waypoint x="425" y="244" />
+        <di:waypoint x="525" y="244" />
+        <di:waypoint x="525" y="305" />
+        <di:waypoint x="550" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="468" y="223" width="45" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_9_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_9">
+        <di:waypoint x="425" y="205" />
+        <di:waypoint x="425" y="287" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="370" y="248" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_2_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_2">
+        <di:waypoint x="725" y="180" />
+        <di:waypoint x="790" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_3_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_3">
+        <di:waypoint x="965" y="180" />
+        <di:waypoint x="1020" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_4_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_4">
+        <di:waypoint x="1195" y="180" />
+        <di:waypoint x="1245" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_10_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_10">
+        <di:waypoint x="1295" y="180" />
+        <di:waypoint x="1375" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1327" y="160" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_11_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_11">
+        <di:waypoint x="1270" y="205" />
+        <di:waypoint x="1270" y="287" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1290" y="245" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_5_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_5">
+        <di:waypoint x="1550" y="180" />
+        <di:waypoint x="1600" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_6_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_6">
+        <di:waypoint x="725" y="305" />
+        <di:waypoint x="800" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Execucao_Barbearia_di" bpmnElement="Execucao_Barbearia" isHorizontal="true">
+        <dc:Bounds x="160" y="475" width="1900" height="535" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Execucao_Recepcao_di" bpmnElement="Execucao_Recepcao" isHorizontal="true">
+        <dc:Bounds x="190" y="475" width="1870" height="345" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Execucao_Barbeiro_di" bpmnElement="Execucao_Barbeiro" isHorizontal="true">
+        <dc:Bounds x="190" y="820" width="1870" height="190" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_Conferir_di" bpmnElement="R_Conferir">
+        <dc:Bounds x="355" y="550" width="175" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_Recepcionar_di" bpmnElement="R_Recepcionar">
+        <dc:Bounds x="720" y="550" width="195" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_CancelarReserva_di" bpmnElement="R_CancelarReserva">
+        <dc:Bounds x="720" y="655" width="195" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_Cancelado_di" bpmnElement="R_Cancelado">
+        <dc:Bounds x="970" y="677" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="940" y="724" width="95" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_Feedback_di" bpmnElement="R_Feedback">
+        <dc:Bounds x="1205" y="550" width="195" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_Fim_di" bpmnElement="R_Fim">
+        <dc:Bounds x="1480" y="737" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1398" y="780" width="200" height="32" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_FeedbackFim_di" bpmnElement="R_FeedbackFim">
+        <dc:Bounds x="1982" y="677" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1961" y="720" width="96" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_RegistrarFeedback_di" bpmnElement="R_RegistrarFeedback">
+        <dc:Bounds x="1745" y="655" width="190" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_FeedbackInicio_di" bpmnElement="R_FeedbackInicio">
+        <dc:Bounds x="1455" y="550" width="170" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_Falta_di" bpmnElement="R_Falta">
+        <dc:Bounds x="432" y="710" width="175" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_Cortar_di" bpmnElement="R_Cortar">
+        <dc:Bounds x="1072" y="880" width="195" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_Inicio_di" bpmnElement="R_Inicio">
+        <dc:Bounds x="252" y="572" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="245" y="618" width="99" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_FaltaFim_di" bpmnElement="R_FaltaFim">
+        <dc:Bounds x="252" y="732" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="212" y="780" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_PrazoAvaliacao_di" bpmnElement="R_PrazoAvaliacao">
+        <dc:Bounds x="1547" y="612" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1588" y="638" width="130" height="30" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_AusenciaConstatada_di" bpmnElement="R_AusenciaConstatada">
+        <dc:Bounds x="365" y="612" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="290" y="650" width="85" height="28" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="R_CancelamentoInformado_di" bpmnElement="R_CancelamentoInformado">
+        <dc:Bounds x="478" y="612" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="520" y="638" width="130" height="28" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_12_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_12">
+        <di:waypoint x="288" y="590" />
+        <di:waypoint x="355" y="590" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_13_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_13">
+        <di:waypoint x="530" y="590" />
+        <di:waypoint x="720" y="590" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_19_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_19">
+        <di:waypoint x="496" y="648" />
+        <di:waypoint x="496" y="668" />
+        <di:waypoint x="690" y="668" />
+        <di:waypoint x="690" y="695" />
+        <di:waypoint x="720" y="695" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_20_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_20">
+        <di:waypoint x="383" y="648" />
+        <di:waypoint x="383" y="690" />
+        <di:waypoint x="520" y="690" />
+        <di:waypoint x="520" y="710" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_22_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_22">
+        <di:waypoint x="915" y="590" />
+        <di:waypoint x="1100" y="590" />
+        <di:waypoint x="1100" y="880" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_14_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_14">
+        <di:waypoint x="915" y="695" />
+        <di:waypoint x="970" y="695" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_23_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_23">
+        <di:waypoint x="1230" y="880" />
+        <di:waypoint x="1230" y="650" />
+        <di:waypoint x="1302" y="650" />
+        <di:waypoint x="1302" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_15_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_15">
+        <di:waypoint x="1400" y="590" />
+        <di:waypoint x="1455" y="590" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_17_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_17">
+        <di:waypoint x="1935" y="695" />
+        <di:waypoint x="1982" y="695" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_16_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_16">
+        <di:waypoint x="1625" y="590" />
+        <di:waypoint x="1730" y="590" />
+        <di:waypoint x="1730" y="695" />
+        <di:waypoint x="1745" y="695" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Flow_21_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Flow_21">
+        <di:waypoint x="432" y="750" />
+        <di:waypoint x="288" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="R_FluxoPrazoEncerrado_di" bpmnElement="R_FluxoPrazoEncerrado">
+        <di:waypoint x="1565" y="648" />
+        <di:waypoint x="1565" y="720" />
+        <di:waypoint x="1498" y="720" />
+        <di:waypoint x="1498" y="737" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Message_1_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Message_1">
+        <di:waypoint x="725" y="180" />
+        <di:waypoint x="750" y="180" />
+        <di:waypoint x="750" y="440" />
+        <di:waypoint x="442" y="440" />
+        <di:waypoint x="442" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="455" y="445" width="130" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Message_2_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Message_2">
+        <di:waypoint x="637" y="345" />
+        <di:waypoint x="637" y="400" />
+        <di:waypoint x="650" y="400" />
+        <di:waypoint x="650" y="630" />
+        <di:waypoint x="514" y="630" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="540" y="407" width="100" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Message_3_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Message_3">
+        <di:waypoint x="1169" y="880" />
+        <di:waypoint x="1169" y="460" />
+        <di:waypoint x="877" y="460" />
+        <di:waypoint x="877" y="220" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="925" y="434" width="130" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Message_4_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Message_4">
+        <di:waypoint x="1302" y="550" />
+        <di:waypoint x="1302" y="447" />
+        <di:waypoint x="1107" y="447" />
+        <di:waypoint x="1107" y="220" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1180" y="418" width="135" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-recepcao-execucao-as-is_Message_5_di" bpmnElement="barbeirada-recepcao-execucao-as-is_Message_5">
+        <di:waypoint x="1462" y="220" />
+        <di:waypoint x="1462" y="420" />
+        <di:waypoint x="1540" y="420" />
+        <di:waypoint x="1540" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1480" y="390" width="100" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

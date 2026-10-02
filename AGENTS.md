@@ -7,7 +7,8 @@ Este é um kit reutilizável. Não existe empresa, grupo, dono de processo ou et
 2. Priorize enunciado atual > aulas atuais e orientações do professor > modelo docente > exemplos genéricos > documentação externa.
 3. Consulte `materiais/aulas/`, `materiais/tarefas/` e `materiais/modelo-apresentacao-as-is.pdf` conforme a atividade. Os enunciados de tarefas contêm casos próprios e não são requisitos automáticos do novo trabalho.
 4. `templates/` contém exemplos gerados de estrutura; não são respostas oficiais nem processos reais.
-5. Confirme a etapa solicitada: apresentação inicial, descoberta, AS-IS, análise ou TO-BE. Não avance automaticamente para etapas seguintes.
+5. `trabalhos-do-bryan/` contém um exemplo acadêmico da Barbeirada Club; consulte sua estrutura sem copiar o caso ou transformar suas premissas em fatos do novo trabalho.
+6. Confirme a etapa solicitada: apresentação inicial, descoberta, AS-IS, análise ou TO-BE. Não avance automaticamente para etapas seguintes.
 
 ## Antes de desenhar
 - Levante participantes, responsabilidades, entradas, atividades, decisões, mensagens, exceções, saídas e sistemas.

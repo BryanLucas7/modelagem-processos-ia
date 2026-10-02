@@ -1,0 +1,417 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_barbeirada-atendimento-agendamento-as-is" targetNamespace="https://barbeirada.example/modelagem" exporter="Camunda Modeler" exporterVersion="5.51.1">
+  <bpmn:message id="A_M_Confirmacao" name="Confirmação da reserva"/>
+  <bpmn:message id="A_M_Resposta" name="Resposta do cliente"/>
+  <bpmn:message id="A_M_Proposta" name="Proposta ou alternativa"/>
+  <bpmn:message id="A_M_Pedido" name="Pedido e preferências"/>
+  <bpmn:collaboration id="Collaboration_barbeirada-atendimento-agendamento-as-is">
+    <bpmn:participant id="Agendamento_Cliente" name="Cliente / Lead" processRef="Process_Agendamento_Cliente"/>
+    <bpmn:participant id="Agendamento_Barbearia" name="Barbeirada Club" processRef="Process_Agendamento_Barbearia"/>
+    <bpmn:messageFlow id="barbeirada-atendimento-agendamento-as-is_Message_1" name="Pedido" sourceRef="AC_Pedido" targetRef="A_Inicio"/>
+    <bpmn:messageFlow id="barbeirada-atendimento-agendamento-as-is_Message_2" name="Proposta" sourceRef="A_Oferecer" targetRef="AC_Retorno"/>
+    <bpmn:messageFlow id="barbeirada-atendimento-agendamento-as-is_Message_3" name="Aceite" sourceRef="AC_Aceitar" targetRef="A_Verificar"/>
+    <bpmn:messageFlow id="barbeirada-atendimento-agendamento-as-is_Message_4" name="Nova preferência" sourceRef="AC_Preferencia" targetRef="A_Verificar"/>
+    <bpmn:messageFlow id="barbeirada-atendimento-agendamento-as-is_Message_5" name="Desistência" sourceRef="AC_Desistir" targetRef="A_Verificar"/>
+    <bpmn:messageFlow id="barbeirada-atendimento-agendamento-as-is_Message_6" name="Confirmação" sourceRef="A_Confirmar" targetRef="AC_Confirmacao"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_Agendamento_Cliente" name="Cliente / interessado" isExecutable="false">
+    <bpmn:documentation>AS-IS acadêmico da Barbeirada Club. Fontes: apresentação inicial do grupo, template AS-IS do professor e Aulas 4, 5 e 6 do semestre. Confirmado pelo usuário: a recepcionista responde no Chatwoot e registra manualmente a reserva no CashBarber. Detalhes adicionais são premissas autorizadas de modelagem, sem entrevistas ou medições atribuídas à empresa. Revisão solicitada pelo usuário: nível descritivo, atividades agrupadas por objetivo, cliente explícito, menor detalhamento e layout compacto. Objetos de dados e anotações visuais foram retirados; premissas permanecem nesta documentação. Sem integração automática, engine, deploy ou extensões de execução.  Entrada: contato recebido, proveniente da captação. Toda resposta, conferência de interesse/unidade e complemento do pedido ficam neste processo; a captação termina no envio do contato. Saída: reserva confirmada ou desistência. Atendimento inicial inclui coletar ou complementar serviço, unidade e preferências. Esses detalhes são premissas e foram agrupados na atividade Atender e conferir pedido. Consulta de disponibilidade, proposta, espera e registro permanecem distintos porque representam responsabilidades e decisões centrais. A proposta pode conter horário disponível ou pedido de outra preferência. Cliente confirma, pede outra opção ou desiste. Sem resposta, o caso permanece aguardando; não há prazo fictício de abandono.</bpmn:documentation>
+    <bpmn:sendTask id="AC_Pedido" name="Informar pedido e preferências" messageRef="A_M_Pedido">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_2</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="AC_Retorno" name="Aguardar proposta da recepção" messageRef="A_M_Proposta">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_2</bpmn:incoming>
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_3</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="AC_Decisao" name="Resposta à proposta?">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_3</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_7</bpmn:outgoing>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_8</bpmn:outgoing>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="AC_Aceitar" name="Confirmar horário" messageRef="A_M_Resposta">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_4</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="AC_Confirmacao" name="Receber confirmação da reserva" messageRef="A_M_Confirmacao">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_4</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_5</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:endEvent id="AC_Fim" name="Reserva confirmada">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="AC_Preferencia" name="Informar nova preferência" messageRef="A_M_Resposta">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_10</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="AC_Desistir" name="Informar desistência" messageRef="A_M_Resposta">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_9</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_6</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="AC_FimDesistencia" name="Sem agendamento">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="AC_Inicio" name="Interesse em agendar">
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_1" sourceRef="AC_Inicio" targetRef="AC_Pedido"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_2" sourceRef="AC_Pedido" targetRef="AC_Retorno"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_10" sourceRef="AC_Preferencia" targetRef="AC_Retorno"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_3" sourceRef="AC_Retorno" targetRef="AC_Decisao"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_7" name="Confirmar" sourceRef="AC_Decisao" targetRef="AC_Aceitar">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Confirmar</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_8" name="Outra opção" sourceRef="AC_Decisao" targetRef="AC_Preferencia">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Outra opção</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_9" name="Desistir" sourceRef="AC_Decisao" targetRef="AC_Desistir">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Desistir</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_4" sourceRef="AC_Aceitar" targetRef="AC_Confirmacao"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_5" sourceRef="AC_Confirmacao" targetRef="AC_Fim"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_6" sourceRef="AC_Desistir" targetRef="AC_FimDesistencia"/>
+  </bpmn:process>
+  <bpmn:process id="Process_Agendamento_Barbearia" name="Barbeirada Club" isExecutable="false">
+    <bpmn:documentation>AS-IS acadêmico da Barbeirada Club. Fontes: apresentação inicial do grupo, template AS-IS do professor e Aulas 4, 5 e 6 do semestre. Confirmado pelo usuário: a recepcionista responde no Chatwoot e registra manualmente a reserva no CashBarber. Detalhes adicionais são premissas autorizadas de modelagem, sem entrevistas ou medições atribuídas à empresa. Revisão solicitada pelo usuário: nível descritivo, atividades agrupadas por objetivo, cliente explícito, menor detalhamento e layout compacto. Objetos de dados e anotações visuais foram retirados; premissas permanecem nesta documentação. Sem integração automática, engine, deploy ou extensões de execução.  Entrada: contato recebido, proveniente da captação. Toda resposta, conferência de interesse/unidade e complemento do pedido ficam neste processo; a captação termina no envio do contato. Saída: reserva confirmada ou desistência. Atendimento inicial inclui coletar ou complementar serviço, unidade e preferências. Esses detalhes são premissas e foram agrupados na atividade Atender e conferir pedido. Consulta de disponibilidade, proposta, espera e registro permanecem distintos porque representam responsabilidades e decisões centrais. A proposta pode conter horário disponível ou pedido de outra preferência. Cliente confirma, pede outra opção ou desiste. Sem resposta, o caso permanece aguardando; não há prazo fictício de abandono.</bpmn:documentation>
+    <bpmn:laneSet id="LaneSet_Agendamento_Barbearia">
+      <bpmn:lane id="Agendamento_Recepcao" name="Recepcionista">
+        <bpmn:flowNodeRef>A_Inicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Responder</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Consultar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Oferecer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Verificar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Decisao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Recusou</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Fim</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Confirmar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Registrar</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="A_Inicio" name="Contato recebido">
+      <bpmn:documentation>Entrada: contato enviado pelo cliente no processo Captação de clientes. O atendimento e a conferência/complemento do pedido começam neste processo, pela recepcionista no Chatwoot. Os dois diagramas representam recortes sucessivos do mesmo processo fim-a-fim, não uma nova integração ou transferência automática.</bpmn:documentation><bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_11</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="A_Inicio_event" messageRef="A_M_Pedido"/>
+    </bpmn:startEvent>
+    <bpmn:userTask id="A_Responder" name="Atender e conferir pedido no Chatwoot">
+      <bpmn:documentation>Chatwoot e responsável confirmados. Coleta/complemento de dados são premissas agrupadas nesta atividade. As interações rotineiras de complemento não são expandidas no nível descritivo.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_11</bpmn:incoming>
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_20</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_12</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="A_Consultar" name="Consultar horários no CashBarber">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_12</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_13</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sendTask id="A_Oferecer" name="Propor horário ou alternativa pelo Chatwoot" messageRef="A_M_Proposta">
+      <bpmn:documentation>Premissa: quando a preferência não está disponível, negociar outra unidade, horário ou barbeiro. A decisão de disponibilidade foi agrupada na consulta e proposta.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_13</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_14</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="A_Verificar" name="Aguardar resposta do cliente" messageRef="A_M_Resposta">
+      <bpmn:documentation>Sem resposta, a conversa permanece nesta espera. Não existe prazo de abandono confirmado.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_14</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_15</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="A_Decisao" name="Resposta do cliente?">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_15</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_18</bpmn:outgoing>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_19</bpmn:outgoing>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_20</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="A_Recusou" name="Sem agendamento">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_19</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="A_Fim" name="Reserva confirmada">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_17</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="A_Confirmar" name="Enviar confirmação pelo Chatwoot" messageRef="A_M_Confirmacao">
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_16</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_17</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="A_Registrar" name="Registrar reserva no CashBarber">
+      <bpmn:documentation>Registro manual pela recepcionista confirmado. Tarefa de usuário: trabalho humano com software. Não há integração automática com Chatwoot.</bpmn:documentation>
+      <bpmn:incoming>barbeirada-atendimento-agendamento-as-is_Flow_18</bpmn:incoming>
+      <bpmn:outgoing>barbeirada-atendimento-agendamento-as-is_Flow_16</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_11" sourceRef="A_Inicio" targetRef="A_Responder"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_20" name="Outra opção" sourceRef="A_Decisao" targetRef="A_Responder">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Outra opção</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_12" sourceRef="A_Responder" targetRef="A_Consultar"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_13" sourceRef="A_Consultar" targetRef="A_Oferecer"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_14" sourceRef="A_Oferecer" targetRef="A_Verificar"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_15" sourceRef="A_Verificar" targetRef="A_Decisao"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_18" name="Confirmou" sourceRef="A_Decisao" targetRef="A_Registrar">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Confirmou</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_19" name="Desistiu" sourceRef="A_Decisao" targetRef="A_Recusou">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Desistiu</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_17" sourceRef="A_Confirmar" targetRef="A_Fim"/>
+    <bpmn:sequenceFlow id="barbeirada-atendimento-agendamento-as-is_Flow_16" sourceRef="A_Registrar" targetRef="A_Confirmar"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_barbeirada-atendimento-agendamento-as-is">
+    <bpmndi:BPMNPlane id="Plane_barbeirada-atendimento-agendamento-as-is" bpmnElement="Collaboration_barbeirada-atendimento-agendamento-as-is">
+      <bpmndi:BPMNShape id="Agendamento_Cliente_di" bpmnElement="Agendamento_Cliente" isHorizontal="true">
+        <dc:Bounds x="160" y="85" width="1650" height="355"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_Pedido_di" bpmnElement="AC_Pedido">
+        <dc:Bounds x="385" y="160" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_Retorno_di" bpmnElement="AC_Retorno">
+        <dc:Bounds x="590" y="160" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_Decisao_di" bpmnElement="AC_Decisao" isMarkerVisible="true">
+        <dc:Bounds x="810" y="175" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="784" y="115" width="108" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_Aceitar_di" bpmnElement="AC_Aceitar">
+        <dc:Bounds x="960" y="160" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_Confirmacao_di" bpmnElement="AC_Confirmacao">
+        <dc:Bounds x="1180" y="160" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_Fim_di" bpmnElement="AC_Fim">
+        <dc:Bounds x="1400" y="182" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1383" y="227" width="99" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_Preferencia_di" bpmnElement="AC_Preferencia">
+        <dc:Bounds x="960" y="300" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_Desistir_di" bpmnElement="AC_Desistir">
+        <dc:Bounds x="1200" y="300" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_FimDesistencia_di" bpmnElement="AC_FimDesistencia">
+        <dc:Bounds x="1440" y="322" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1424" y="367" width="93" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AC_Inicio_di" bpmnElement="AC_Inicio">
+        <dc:Bounds x="252" y="182" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="233" y="227" width="108" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_1_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_1">
+        <di:waypoint x="288" y="200"/>
+        <di:waypoint x="385" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_2_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_2">
+        <di:waypoint x="555" y="200"/>
+        <di:waypoint x="590" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_10_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_10">
+        <di:waypoint x="960" y="340"/>
+        <di:waypoint x="930" y="340"/>
+        <di:waypoint x="930" y="275"/>
+        <di:waypoint x="570" y="275"/>
+        <di:waypoint x="570" y="200"/>
+        <di:waypoint x="590" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_3_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_3">
+        <di:waypoint x="760" y="200"/>
+        <di:waypoint x="810" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_7_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_7">
+        <di:waypoint x="860" y="200"/>
+        <di:waypoint x="960" y="200"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="888" y="174" width="49" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_8_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_8">
+        <di:waypoint x="835" y="225"/>
+        <di:waypoint x="835" y="340"/>
+        <di:waypoint x="960" y="340"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="867" y="317" width="61" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_9_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_9">
+        <di:waypoint x="835" y="225"/>
+        <di:waypoint x="835" y="405"/>
+        <di:waypoint x="1175" y="405"/>
+        <di:waypoint x="1175" y="340"/>
+        <di:waypoint x="1200" y="340"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="921" y="413" width="37" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_4_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_4">
+        <di:waypoint x="1130" y="200"/>
+        <di:waypoint x="1180" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_5_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_5">
+        <di:waypoint x="1350" y="200"/>
+        <di:waypoint x="1400" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_6_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_6">
+        <di:waypoint x="1370" y="340"/>
+        <di:waypoint x="1440" y="340"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Agendamento_Barbearia_di" bpmnElement="Agendamento_Barbearia" isHorizontal="true">
+        <dc:Bounds x="250" y="535" width="1630" height="330"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Agendamento_Recepcao_di" bpmnElement="Agendamento_Recepcao" isHorizontal="true">
+        <dc:Bounds x="280" y="535" width="1600" height="330"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Inicio_di" bpmnElement="A_Inicio">
+        <dc:Bounds x="310" y="642" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="325" y="705" width="80" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Responder_di" bpmnElement="A_Responder">
+        <dc:Bounds x="385" y="620" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Consultar_di" bpmnElement="A_Consultar">
+        <dc:Bounds x="590" y="620" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Oferecer_di" bpmnElement="A_Oferecer">
+        <dc:Bounds x="795" y="620" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Verificar_di" bpmnElement="A_Verificar">
+        <dc:Bounds x="1000" y="620" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Decisao_di" bpmnElement="A_Decisao" isMarkerVisible="true">
+        <dc:Bounds x="1205" y="635" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1186" y="593" width="103" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Recusou_di" bpmnElement="A_Recusou">
+        <dc:Bounds x="1392" y="742" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1376" y="788" width="93" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Fim_di" bpmnElement="A_Fim">
+        <dc:Bounds x="1772" y="642" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1733" y="690" width="99" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Confirmar_di" bpmnElement="A_Confirmar">
+        <dc:Bounds x="1555" y="620" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Registrar_di" bpmnElement="A_Registrar">
+        <dc:Bounds x="1345" y="620" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_11_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_11">
+        <di:waypoint x="346" y="660"/>
+        <di:waypoint x="385" y="660"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_20_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_20">
+        <di:waypoint x="1230" y="685"/>
+        <di:waypoint x="1230" y="790"/>
+        <di:waypoint x="470" y="790"/>
+        <di:waypoint x="470" y="700"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="849" y="815" width="61" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_12_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_12">
+        <di:waypoint x="555" y="660"/>
+        <di:waypoint x="590" y="660"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_13_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_13">
+        <di:waypoint x="760" y="660"/>
+        <di:waypoint x="795" y="660"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_14_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_14">
+        <di:waypoint x="965" y="660"/>
+        <di:waypoint x="1000" y="660"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_15_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_15">
+        <di:waypoint x="1170" y="660"/>
+        <di:waypoint x="1205" y="660"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_18_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_18">
+        <di:waypoint x="1255" y="660"/>
+        <di:waypoint x="1345" y="660"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1268" y="637" width="51" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_19_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_19">
+        <di:waypoint x="1230" y="685"/>
+        <di:waypoint x="1230" y="760"/>
+        <di:waypoint x="1392" y="760"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1305" y="737" width="40" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_16_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_16">
+        <di:waypoint x="1515" y="660"/>
+        <di:waypoint x="1555" y="660"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Flow_17_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Flow_17">
+        <di:waypoint x="1725" y="660"/>
+        <di:waypoint x="1772" y="660"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Message_1_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Message_1">
+        <di:waypoint x="470" y="240"/>
+        <di:waypoint x="470" y="460"/>
+        <di:waypoint x="328" y="460"/>
+        <di:waypoint x="328" y="642"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="390" y="478" width="35" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Message_2_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Message_2">
+        <di:waypoint x="880" y="620"/>
+        <di:waypoint x="880" y="485"/>
+        <di:waypoint x="675" y="485"/>
+        <di:waypoint x="675" y="240"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="748" y="461" width="45" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Message_3_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Message_3">
+        <di:waypoint x="1130" y="200"/>
+        <di:waypoint x="1160" y="200"/>
+        <di:waypoint x="1160" y="470"/>
+        <di:waypoint x="1095" y="470"/>
+        <di:waypoint x="1095" y="620"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1114" y="453" width="31" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Message_4_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Message_4">
+        <di:waypoint x="1045" y="380"/>
+        <di:waypoint x="1045" y="510"/>
+        <di:waypoint x="1060" y="510"/>
+        <di:waypoint x="1060" y="620"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="920" y="489" width="84" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Message_5_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Message_5">
+        <di:waypoint x="1285" y="380"/>
+        <di:waypoint x="1285" y="500"/>
+        <di:waypoint x="1115" y="500"/>
+        <di:waypoint x="1115" y="620"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1209" y="478" width="57" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="barbeirada-atendimento-agendamento-as-is_Message_6_di" bpmnElement="barbeirada-atendimento-agendamento-as-is_Message_6">
+        <di:waypoint x="1640" y="620"/>
+        <di:waypoint x="1640" y="130"/>
+        <di:waypoint x="1265" y="130"/>
+        <di:waypoint x="1265" y="160"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1663" y="363" width="63" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
