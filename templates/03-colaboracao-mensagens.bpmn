@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_Colab" targetNamespace="http://example.com/modelagem-processos" exporter="Camunda Modeler" exporterVersion="5.51.1">
+  <bpmn:message id="Message_Solicitacao" name="Solicitação" />
+  <bpmn:message id="Message_Resposta" name="Resposta" />
+  <bpmn:collaboration id="Collaboration_1">
+    <bpmn:participant id="Participant_A" name="Participante A" processRef="Process_A" />
+    <bpmn:participant id="Participant_B" name="Participante B" processRef="Process_B" />
+    <bpmn:messageFlow id="MF_1" name="Solicitação" sourceRef="Throw_A" targetRef="Start_B" />
+    <bpmn:messageFlow id="MF_2" name="Resposta" sourceRef="Throw_B" targetRef="Catch_A" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_A" name="Processo A" isExecutable="false">
+    <bpmn:startEvent id="Start_A" name="Necessidade identificada">
+      <bpmn:outgoing>A1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_Preparar" name="Preparar solicitação">
+      <bpmn:incoming>A1</bpmn:incoming>
+      <bpmn:outgoing>A2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateThrowEvent id="Throw_A" name="Enviar solicitação">
+      <bpmn:incoming>A2</bpmn:incoming>
+      <bpmn:outgoing>A3</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_Solicitacao" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateCatchEvent id="Catch_A" name="Receber resposta">
+      <bpmn:incoming>A3</bpmn:incoming>
+      <bpmn:outgoing>A4</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_Resposta" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="Task_Avaliar" name="Avaliar resposta">
+      <bpmn:incoming>A4</bpmn:incoming>
+      <bpmn:outgoing>A5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="End_A" name="Atendimento concluído">
+      <bpmn:incoming>A5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="A1" sourceRef="Start_A" targetRef="Task_Preparar" />
+    <bpmn:sequenceFlow id="A2" sourceRef="Task_Preparar" targetRef="Throw_A" />
+    <bpmn:sequenceFlow id="A3" sourceRef="Throw_A" targetRef="Catch_A" />
+    <bpmn:sequenceFlow id="A4" sourceRef="Catch_A" targetRef="Task_Avaliar" />
+    <bpmn:sequenceFlow id="A5" sourceRef="Task_Avaliar" targetRef="End_A" />
+  </bpmn:process>
+  <bpmn:process id="Process_B" name="Processo B" isExecutable="false">
+    <bpmn:startEvent id="Start_B" name="Solicitação recebida">
+      <bpmn:outgoing>B1</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_Solicitacao" />
+    </bpmn:startEvent>
+    <bpmn:task id="Task_Analisar_B" name="Analisar solicitação">
+      <bpmn:incoming>B1</bpmn:incoming>
+      <bpmn:outgoing>B2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateThrowEvent id="Throw_B" name="Enviar resposta">
+      <bpmn:incoming>B2</bpmn:incoming>
+      <bpmn:outgoing>B3</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_Resposta" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="End_B" name="Atendimento encerrado">
+      <bpmn:incoming>B3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="B1" sourceRef="Start_B" targetRef="Task_Analisar_B" />
+    <bpmn:sequenceFlow id="B2" sourceRef="Task_Analisar_B" targetRef="Throw_B" />
+    <bpmn:sequenceFlow id="B3" sourceRef="Throw_B" targetRef="End_B" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_Colab">
+    <bpmndi:BPMNPlane id="Plane_Colab" bpmnElement="Collaboration_1">
+      <bpmndi:BPMNShape id="PA_di" bpmnElement="Participant_A" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1000" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SA_di" bpmnElement="Start_A">
+        <dc:Bounds x="210" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="196" y="198" width="64" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TP_di" bpmnElement="Task_Preparar">
+        <dc:Bounds x="300" y="140" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TA_di" bpmnElement="Throw_A">
+        <dc:Bounds x="470" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="445" y="143" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CA_di" bpmnElement="Catch_A">
+        <dc:Bounds x="670" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="644" y="143" width="87" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TAv_di" bpmnElement="Task_Avaliar">
+        <dc:Bounds x="760" y="140" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EA_di" bpmnElement="End_A">
+        <dc:Bounds x="940" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="927" y="198" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="A1_di" bpmnElement="A1">
+        <di:waypoint x="246" y="180" />
+        <di:waypoint x="300" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="A2_di" bpmnElement="A2">
+        <di:waypoint x="420" y="180" />
+        <di:waypoint x="470" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="A3_di" bpmnElement="A3">
+        <di:waypoint x="506" y="180" />
+        <di:waypoint x="670" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="A4_di" bpmnElement="A4">
+        <di:waypoint x="706" y="180" />
+        <di:waypoint x="760" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="A5_di" bpmnElement="A5">
+        <di:waypoint x="880" y="180" />
+        <di:waypoint x="940" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="PB_di" bpmnElement="Participant_B" isHorizontal="true">
+        <dc:Bounds x="160" y="360" width="1000" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SB_di" bpmnElement="Start_B">
+        <dc:Bounds x="470" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="461" y="478" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TAB_di" bpmnElement="Task_Analisar_B">
+        <dc:Bounds x="580" y="420" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TB_di" bpmnElement="Throw_B">
+        <dc:Bounds x="760" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="740" y="478" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EB_di" bpmnElement="End_B">
+        <dc:Bounds x="900" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="887" y="478" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="B1_di" bpmnElement="B1">
+        <di:waypoint x="506" y="460" />
+        <di:waypoint x="580" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="B2_di" bpmnElement="B2">
+        <di:waypoint x="700" y="460" />
+        <di:waypoint x="760" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="B3_di" bpmnElement="B3">
+        <di:waypoint x="796" y="460" />
+        <di:waypoint x="900" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF1_di" bpmnElement="MF_1">
+        <di:waypoint x="488" y="198" />
+        <di:waypoint x="488" y="442" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="503" y="310" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF2_di" bpmnElement="MF_2">
+        <di:waypoint x="778" y="442" />
+        <di:waypoint x="778" y="320" />
+        <di:waypoint x="688" y="320" />
+        <di:waypoint x="688" y="198" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="710" y="295" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

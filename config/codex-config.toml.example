@@ -1,0 +1,8 @@
+# Exemplo sem credenciais; não substitua sua configuração pessoal inteira.
+[mcp_servers.camunda-docs]
+url = "https://camunda-docs.mcp.kapa.ai"
+
+# Opcional, se não usar o plugin oficial:
+#[mcp_servers.drawio]
+#command = "npx"
+#args = ["-y", "@drawio/mcp"]

@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+.codex/config.toml
+auth.json
+credentials.json
+*.pem
+*.key
+node_modules/
+__pycache__/
+.venv/
+~$*
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+backups/

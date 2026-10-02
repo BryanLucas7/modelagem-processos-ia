@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "camunda-docs": {
+      "url": "https://camunda-docs.mcp.kapa.ai"
+    },
+    "drawio": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@drawio/mcp"
+      ]
+    }
+  }
+}

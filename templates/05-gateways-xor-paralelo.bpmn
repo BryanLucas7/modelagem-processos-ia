@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+ xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+ xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+ xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+ id="Definitions_Gateways" targetNamespace="http://example.com/modelagem-processos">
+  <bpmn:process id="Process_Gateways" name="Exemplos de gateways" isExecutable="false">
+    <bpmn:startEvent id="Start_G"><bpmn:outgoing>G1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:exclusiveGateway id="XOR_Split" name="Condição?"><bpmn:incoming>G1</bpmn:incoming><bpmn:outgoing>G2</bpmn:outgoing><bpmn:outgoing>G3</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:task id="Task_A" name="Executar caminho A"><bpmn:incoming>G2</bpmn:incoming><bpmn:outgoing>G4</bpmn:outgoing></bpmn:task>
+    <bpmn:task id="Task_B" name="Executar caminho B"><bpmn:incoming>G3</bpmn:incoming><bpmn:outgoing>G5</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="XOR_Merge"><bpmn:incoming>G4</bpmn:incoming><bpmn:incoming>G5</bpmn:incoming><bpmn:outgoing>G6</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="AND_Split"><bpmn:incoming>G6</bpmn:incoming><bpmn:outgoing>G7</bpmn:outgoing><bpmn:outgoing>G8</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:task id="Task_C" name="Executar atividade C"><bpmn:incoming>G7</bpmn:incoming><bpmn:outgoing>G9</bpmn:outgoing></bpmn:task>
+    <bpmn:task id="Task_D" name="Executar atividade D"><bpmn:incoming>G8</bpmn:incoming><bpmn:outgoing>G10</bpmn:outgoing></bpmn:task>
+    <bpmn:parallelGateway id="AND_Join"><bpmn:incoming>G9</bpmn:incoming><bpmn:incoming>G10</bpmn:incoming><bpmn:outgoing>G11</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:endEvent id="End_G"><bpmn:incoming>G11</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="G1" sourceRef="Start_G" targetRef="XOR_Split"/>
+    <bpmn:sequenceFlow id="G2" name="Sim" sourceRef="XOR_Split" targetRef="Task_A"/>
+    <bpmn:sequenceFlow id="G3" name="Não" sourceRef="XOR_Split" targetRef="Task_B"/>
+    <bpmn:sequenceFlow id="G4" sourceRef="Task_A" targetRef="XOR_Merge"/>
+    <bpmn:sequenceFlow id="G5" sourceRef="Task_B" targetRef="XOR_Merge"/>
+    <bpmn:sequenceFlow id="G6" sourceRef="XOR_Merge" targetRef="AND_Split"/>
+    <bpmn:sequenceFlow id="G7" sourceRef="AND_Split" targetRef="Task_C"/>
+    <bpmn:sequenceFlow id="G8" sourceRef="AND_Split" targetRef="Task_D"/>
+    <bpmn:sequenceFlow id="G9" sourceRef="Task_C" targetRef="AND_Join"/>
+    <bpmn:sequenceFlow id="G10" sourceRef="Task_D" targetRef="AND_Join"/>
+    <bpmn:sequenceFlow id="G11" sourceRef="AND_Join" targetRef="End_G"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_G"><bpmndi:BPMNPlane id="Plane_G" bpmnElement="Process_Gateways">
+    <bpmndi:BPMNShape id="SG_di" bpmnElement="Start_G"><dc:Bounds x="100" y="212" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="XS_di" bpmnElement="XOR_Split" isMarkerVisible="true"><dc:Bounds x="190" y="205" width="50" height="50"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="A_di" bpmnElement="Task_A"><dc:Bounds x="290" y="120" width="130" height="70"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="B_di" bpmnElement="Task_B"><dc:Bounds x="290" y="270" width="130" height="70"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="XM_di" bpmnElement="XOR_Merge" isMarkerVisible="true"><dc:Bounds x="470" y="205" width="50" height="50"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="AS_di" bpmnElement="AND_Split"><dc:Bounds x="580" y="205" width="50" height="50"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="C_di" bpmnElement="Task_C"><dc:Bounds x="680" y="120" width="130" height="70"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="D_di" bpmnElement="Task_D"><dc:Bounds x="680" y="270" width="130" height="70"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="AJ_di" bpmnElement="AND_Join"><dc:Bounds x="860" y="205" width="50" height="50"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="EG_di" bpmnElement="End_G"><dc:Bounds x="980" y="212" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="G1_di" bpmnElement="G1"><di:waypoint x="136" y="230"/><di:waypoint x="190" y="230"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G2_di" bpmnElement="G2"><di:waypoint x="215" y="205"/><di:waypoint x="215" y="155"/><di:waypoint x="290" y="155"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G3_di" bpmnElement="G3"><di:waypoint x="215" y="255"/><di:waypoint x="215" y="305"/><di:waypoint x="290" y="305"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G4_di" bpmnElement="G4"><di:waypoint x="420" y="155"/><di:waypoint x="495" y="155"/><di:waypoint x="495" y="205"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G5_di" bpmnElement="G5"><di:waypoint x="420" y="305"/><di:waypoint x="495" y="305"/><di:waypoint x="495" y="255"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G6_di" bpmnElement="G6"><di:waypoint x="520" y="230"/><di:waypoint x="580" y="230"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G7_di" bpmnElement="G7"><di:waypoint x="605" y="205"/><di:waypoint x="605" y="155"/><di:waypoint x="680" y="155"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G8_di" bpmnElement="G8"><di:waypoint x="605" y="255"/><di:waypoint x="605" y="305"/><di:waypoint x="680" y="305"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G9_di" bpmnElement="G9"><di:waypoint x="810" y="155"/><di:waypoint x="885" y="155"/><di:waypoint x="885" y="205"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G10_di" bpmnElement="G10"><di:waypoint x="810" y="305"/><di:waypoint x="885" y="305"/><di:waypoint x="885" y="255"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="G11_di" bpmnElement="G11"><di:waypoint x="910" y="230"/><di:waypoint x="980" y="230"/></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="Electron" modified="2026-09-20T00:00:00.000Z" agent="ChatGPT" version="26.0.0">
+  <diagram id="cadeia" name="Página-1">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Cadeia de valor" style="text;html=1;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="350" y="40" width="450" height="40" as="geometry"/></mxCell>
+        <mxCell id="support_title" value="ATIVIDADES DE SUPORTE" style="text;html=1;fontStyle=1;align=left;" vertex="1" parent="1"><mxGeometry x="100" y="110" width="260" height="30" as="geometry"/></mxCell>
+        <mxCell id="s1" value="Gestão de pessoas" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="100" y="150" width="900" height="55" as="geometry"/></mxCell>
+        <mxCell id="s2" value="Tecnologia da informação" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="100" y="220" width="900" height="55" as="geometry"/></mxCell>
+        <mxCell id="s3" value="Finanças / infraestrutura" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="100" y="290" width="900" height="55" as="geometry"/></mxCell>
+        <mxCell id="primary_title" value="ATIVIDADES PRIMÁRIAS" style="text;html=1;fontStyle=1;align=left;" vertex="1" parent="1"><mxGeometry x="100" y="390" width="260" height="30" as="geometry"/></mxCell>
+        <mxCell id="p1" value="1. Receber demanda" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="100" y="440" width="155" height="80" as="geometry"/></mxCell>
+        <mxCell id="p2" value="2. Preparar" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="285" y="440" width="155" height="80" as="geometry"/></mxCell>
+        <mxCell id="p3" value="3. Executar" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="470" y="440" width="155" height="80" as="geometry"/></mxCell>
+        <mxCell id="p4" value="4. Entregar" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="655" y="440" width="155" height="80" as="geometry"/></mxCell>
+        <mxCell id="p5" value="5. Pós-entrega" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="840" y="440" width="155" height="80" as="geometry"/></mxCell>
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" edge="1" parent="1" source="p1" target="p2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" edge="1" parent="1" source="p2" target="p3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" edge="1" parent="1" source="p3" target="p4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" edge="1" parent="1" source="p4" target="p5"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
